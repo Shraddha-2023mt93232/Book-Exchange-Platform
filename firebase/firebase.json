@@ -1,0 +1,31 @@
+{
+  "type": "service_account",
+  "project_id": "book-exchange-platform-98851",
+  "private_key_id": "cc38e353ed17753fb3519ba9325e5d818f815d26",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDAESiy6x7RA5F1\n3abpfbYXYzCcbxJskO0n08L++icERvKfdURbwnk9+qkqgkCuYnrUDM+dz3Mb4d+Y\ndIvHmxjf3AGJqqz1BpF1u5BXSNO6qypi76gyBZcaESEMA2ompDAo5guPlVsqD/AI\n6NEuaVarQNobig/9qAkHlU93vkuXF7XbGPmb+xsp+dxdBSnVw4NV/0rppSQWqnjB\ntvi9gVCUSrUkn8bpvrVfr8cl+JfFtbTgy7Gqh06oha86vTREnIbsINt0oEzryAZA\nMYi0fZgBBPyVZTA8hvMDuucdVD3Knxv9daTdTWIj/2U6CcBqZeb2SbRoXq6rbL/E\n1FLK3QmrAgMBAAECggEAEDLCRciqP4LMse3revYKX+bn0sxT95+yE0b67enSADyC\n5NY32YH0G2PjACieZOFTA5mVqZ+1JmJX1bHql1R/dg3GJsKkC0GDuLQEud/J/4xv\nquAUcCzkL/jG2o5agFTI56zIcn0XBFv2E1ed9gtAmc6Ci9+1ITWalq74gJxQyra5\nmhC/J5rfv0o4MbSFs0d0rm+6+60IWT8Gdk6RwRd5GYBrHnR/lcnRDHKSSTs8xvt7\nDZEB1b1YJLYtJRUgu3uSGxz4SYhMEIwawVl8n1PVoQwF98v6h+8tevSk82mgaNGC\ng9KHRM/ojk91+Krn5rBAhdgFYMZAAkoZHER+hiwgeQKBgQD/E8V7SmjvDjrb0dmO\nEw7nnp8Xd7Y4C9ccg4C5B4KE4jr3ir+j95zp2nUzH+ozXOL6rYXUo0aDImgO1mAH\nhWvFTz5XZdVtgBj52M39Aq9gc2rrCoCI5gI/IXX+BNDPWqizuZyrWanpgkRerbXV\nrMEMhpFKnrsYHCbw7iJFJlP5OQKBgQDAwwiO7Bzrtn/XpEt6i5bSHM5Ay9s8fzO+\nT5g6ncjIFYKhm8bcdjNrF6FaEUWAPkrg/vx+n55z59RAiwqL9A/1wcPMDJqdLfd5\nRfnAgREjjrrCewg9leiUsO2tagEG/dmFZ+8YKPsbxanv5qyWSSKN/ndhzrhfBi2W\nx05KAkAOAwKBgCsi4dOuyr4arvN7sonnSS78UTU7xnIF9pPY3UztKzJju8sfCLem\n6T9W9Vj2/bk/7Ratf6NtFUCZ8fUIZeb/tjEA7K8FBqnk7tRZyMQPzy7FdgBXn1MH\narvYYcbac6GNWFhEfG0x1Z0qrXtBby26cE849psi6srx/9fgvaTqDWtpAoGAfd2b\n8/72r28eMQeFhYIqPA41GxhBklIYzlaYtwWaOhPZlX7rLb88udvXLsGCWUfTivDU\nnDXLuDETZgWkIFiAJ1+bYtyEBMgkBJsNhoaAU3B6QE0nx1bgZF7XA1npS9BrvXFt\nLKBtvuelnBFKdmNQ3djfyQy7VMjq8b44P5kSjFMCgYA8sDlE99VoJzAFOU7x3Wgk\nrFwzt/oIZWHFn8X+lGTA57y8qdo/SabFW219nUYlnnfCgEQ0bFY+iwBaLXNdW1+y\n9/rWHZTjRD7yc2Ii8vRzlA7Vwojp+Es2C24ammipPFo1+uG//bKjIR5JO6/AMwiJ\ntgx4CW4wtlkirIYivoEXEA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-vee4w@book-exchange-platform-98851.iam.gserviceaccount.com",
+  "client_id": "105940551420463937561",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-vee4w%40book-exchange-platform-98851.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com",
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
