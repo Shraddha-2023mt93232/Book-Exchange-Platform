@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const admin = require("firebase-admin");
 const credentials = require("./firebase/firebase.json");
+const { encryptedData,decryptedData } = require("./crypto");
 
 admin.initializeApp({
     credential: admin.credential.cert(credentials)
@@ -22,8 +23,11 @@ const controller = {
         }
     },
     addUser: async (req, res) => {
+        const user = req.body;
+        //encrypt password
+        user.password = encryptedData(user.password);
         try {
-            const response = await db.collection("users").add(req.body);
+            const response = await db.collection("users").add(user);
             res.status(201).send(`user added with ID: ${response.id}`);
         } catch (e) {
             console.error(e);
@@ -48,7 +52,6 @@ const controller = {
         try {
             const userId = req.params.id;
             const userDoc = await db.collection("users").get();
-            console.log(userDoc);
             var arr = [];
             userDoc.forEach(doc => {
                 arr.push(doc.data());
@@ -58,13 +61,47 @@ const controller = {
             console.error(e);
             res.status(500).json(e);
         }
+    },
+    validateUser: async(req, res) => {
+        let {email,password} = req.body;
+        // Validate the user's input
+        try{
+            const userDoc = await db.collection('users').where('email', '==', email).get();
+            if(userDoc.size == 0) {
+                return res.status(404).send({
+                    message: {},
+                    valid: false
+                });
+            }else{
+                const user = userDoc.docs[0].data();
+                // compare passwords
+                if (password == decryptedData(user.password)){
+                    return res.status(200).send({
+                        message: user,
+                        valid: true
+                    })
+                }
+                else{
+                    return res.status(401).send({
+                        message: {},
+                        valid: false
+                    })
+                }
+            }
+        }
+        catch(error){
+            console.error(error);
+            res.status(500).json(error);
+        }
     }
 };
+
 
 app.get("/", controller.hello);
 app.post("/user", controller.addUser);
 app.get("/user/:id", controller.getUser);
 app.get("/user/", controller.getAllUsers);
+app.get("/login", controller.validateUser);
 
 
 const PORT = process.env.PORT || 8080;
