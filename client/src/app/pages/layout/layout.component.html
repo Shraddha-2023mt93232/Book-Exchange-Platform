@@ -1,0 +1,73 @@
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <div class="container-fluid">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link books-avaialble" href="">Books Available</a>
+        </li>
+        <!-- <li class="nav-item">
+          <a class="nav-link" href="#">{{user?.firstName}}</a>
+        </li> -->
+        <li class="nav-item">
+          <a class="nav-link" href="#">Link</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">Disabled</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav navbar-right">
+        <!-- User menu -->
+        <li class="nav-item dropdown menu-user">
+          <div class="dropdown">
+            <button class="dropbtn">{{user.firstName}}{{user.lastName}} 
+              <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a href="#">Manage Account</a>
+              <a href= "#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#formModal" (click)="deleteAccount(user.firstName)">Delete Account </a>
+              
+            </div>
+            </div>
+        </li>
+      </ul>
+
+
+
+
+      <!-- <form class="d-flex">
+        <button style='font-size:24px'>{{user?.email}} <i class='far fa-user-circle' style='font-size:36px'></i></button> -->
+        <!-- <span class="text-white">{{user?.email}} </span> 
+        <button class="btn btn-primary" type="button" (click)="onLogoff()">LogOff</button> -->
+      <!-- </form> -->
+    </div>
+  </nav>
+  <table class="table">
+    <thead>
+        <tr>
+            <th *ngFor="let th of tableHeaders" scope="col">{{th}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let dt of data">
+            <td>{{dt.bookName}}</td>
+            <td>{{dt.author}}</td>
+            <td>{{dt.releasedOn | date}}</td>
+            <td>{{dt.available}}</td>
+            <td class = "select">
+              <select>        
+                      
+                      <option value="saab">View</option>
+                      <option value="mercedes">Edit</option>
+                      <option value="audi">Delete</option>
+              </select>
+              
+            </td>   
+        </tr>
+        
+          
+
+    </tbody>
+</table>
+
+
+  
+
