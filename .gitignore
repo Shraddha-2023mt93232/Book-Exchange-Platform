@@ -1,0 +1,18 @@
+#.gitignore
+
+# Ignore node_modules directory
+node_modules/
+
+# Ignore npm debug log
+npm-debug.log
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore IDE files
+*.sublime-workspace
+*.sublime-project
+.idea
+
+# Ignore npm log files
+npm-debug.log*

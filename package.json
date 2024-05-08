@@ -1,0 +1,25 @@
+{
+  "name": "book-exchange-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shraddha-2023mt93232/Book-Exchange-Platform.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shraddha-2023mt93232/Book-Exchange-Platform/issues"
+  },
+  "homepage": "https://github.com/Shraddha-2023mt93232/Book-Exchange-Platform#readme",
+  "dependencies": {
+    "crypto-js": "^4.2.0",
+    "express": "^4.19.2",
+    "firebase": "^10.11.0",
+    "firebase-admin": "^12.1.0"
+  }
+}
