@@ -62,6 +62,20 @@ const controller = {
             res.status(500).json(e);
         }
     },
+    getAllBookList: async (req, res) => {
+        try {
+            const userId = req.params.id;
+            const userDoc = await db.collection("BookList").get();
+            var arr = [];
+            userDoc.forEach(doc => {
+                arr.push(doc.data());
+            });
+            res.status(200).json(arr);
+        } catch (e) {
+            console.error(e);
+            res.status(500).json(e);
+        }
+    },
     validateUser: async(req, res) => {
         let {email,password} = req.body;
         // Validate the user's input
@@ -93,6 +107,17 @@ const controller = {
             console.error(error);
             res.status(500).json(error);
         }
+    },
+    AddBookByUser :async(req,res)=>{
+        try {
+            const book = req.body;
+            const response = await db.collection("BookList").add(book);
+            res.status(201).send(`book added with ID: ${response.id}`);
+
+        } catch (e) {
+            console.error(e);
+            res.status(500).json(e);
+        }
     }
 };
 
@@ -102,7 +127,8 @@ app.post("/user", controller.addUser);
 app.get("/user/:id", controller.getUser);
 app.get("/user/", controller.getAllUsers);
 app.get("/login", controller.validateUser);
-
+app.get("/addbookbyuser", controller.AddBookByUser);
+app.get("/getAllBookList",controller.getAllBookList);
 
 const PORT = process.env.PORT || 8080;
 
