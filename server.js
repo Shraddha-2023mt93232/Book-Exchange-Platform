@@ -118,6 +118,34 @@ const controller = {
             console.error(e);
             res.status(500).json(e);
         }
+    },
+    assignBookToUser: async (req,res)=>{
+        try {
+            const {userId,bookId} = req.body;
+            console.log(userId);
+            console.log(bookId);
+            const userDoc = db.collection("users").doc(userId);
+            userDoc.update({
+                'book': bookId
+            });
+            res.status(200).send(`book with ID: ${bookId} assigned to user`);
+
+        } catch (e) {
+            console.error(e);
+            res.status(500).json(e);
+        }
+    },
+    searchBook: async (req, res)=>{
+        let query = req.body.query;
+        if(!query) return res.status(400).send('Query parameter is missing!');
+        const {key,value} = query;
+        const snapshot = await db.collection('BookList').where(key,'==',value).get();
+        if (!snapshot.empty) {
+            let docs = snapshot.docs.map((doc)=> doc.data());
+            res.status(200).json(docs);
+        } else{
+              res.status(404).json([]);
+        }
     }
 };
 
@@ -129,6 +157,9 @@ app.get("/user/", controller.getAllUsers);
 app.get("/login", controller.validateUser);
 app.get("/addbookbyuser", controller.AddBookByUser);
 app.get("/getAllBookList",controller.getAllBookList);
+app.get("/getAllBookList",controller.getAllBookList);
+app.post('/associate',controller.assignBookToUser);
+app.get('/search',controller.searchBook);
 
 const PORT = process.env.PORT || 8080;
 
