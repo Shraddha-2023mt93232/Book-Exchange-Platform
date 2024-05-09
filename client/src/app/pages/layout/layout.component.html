@@ -1,3 +1,5 @@
+<div role="main">
+  <br>
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
     <div class="container-fluid">
       <ul class="navbar-nav">
@@ -23,7 +25,7 @@
             </button>
             <div class="dropdown-content">
               <a href="#">Manage Account</a>
-              <a href= "#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#formModal" (click)="deleteAccount(user.firstName)">Delete Account </a>
+              <a href= "#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#formModalDelete" (click)="deleteAccount(user.firstName)">Delete Account </a>
               
             </div>
             </div>
@@ -40,6 +42,7 @@
       <!-- </form> -->
     </div>
   </nav>
+  <div>
   <table class="table">
     <thead>
         <tr>
@@ -51,12 +54,17 @@
             <td>{{dt.bookName}}</td>
             <td>{{dt.author}}</td>
             <td>{{dt.releasedOn | date}}</td>
-            <td>{{dt.available}}</td>
+            <!-- <div "> -->
+            <td *ngIf="dt.available===true"><a href="#" data-bs-target="#bookDetailsModal" (click)="openModal(dt.bookName)">Borrow</a></td>
+            <!-- </div> -->
+            <!-- <div *ngIf="dt.available===false"> -->
+              <td *ngIf="dt.available===false"><b>Currently Unavailable</b></td>
+              <!-- </div> -->
             <td class = "select">
               <select>        
                       
                       <option value="saab">View</option>
-                      <option value="mercedes">Edit</option>
+                      <!-- <option value="mercedes" data-bs-target="#bookDetailsModal" (click)="openModal(dt.bookName)">Edit</option> -->
                       <option value="audi">Delete</option>
               </select>
               
@@ -67,6 +75,55 @@
 
     </tbody>
 </table>
+<div id="bookDetailsModal" tabindex="-1">
+  <div *ngIf="showModalPopup==true" class="relative w-full max-w-4xl max-h-full">
+      <!-- Modal content -->
+      
+        <div class="modal-content">
+          <span class="close" (click)="closeModal()">&times;</span>
+          <h2>{{currBookName}}</h2>
+          <form  #borrow="ngForm" (ngSubmit)="submitForm()">
+            <div class="form-group">
+              <label for="name">Name:</label>
+              <input type="text" class="form-control" id="name" [(ngModel)]="borrower.name" name="name" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input type="email" class="form-control" id="email" [(ngModel)]="borrower.email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label for="phoneNumber">Phone Number:</label>
+              <input type="tel" class="form-control" id="phoneNumber" [(ngModel)]="borrower.phoneNumber" name="phoneNumber" required>
+            </div>
+            <div class="form-group">
+              <label for="fromDate">From:</label>
+              <input type="date" class="form-control" id="fromDate" [(ngModel)]="borrower.fromDate" name="fromDate" required>
+            </div>
+            <div class="form-group">
+              <label for="toDate">To:</label>
+              <input type="date" class="form-control" id="toDate" [(ngModel)]="borrower.toDate" name="toDate" required>
+            </div>
+            <button type="submit" class="btn btn-primary" >Save</button>
+          </form>
+        </div>
+      
+  </div>
+</div>
+</div>
+<div>
+  <div *ngIf="showDelete===true" class="modal" >
+    <div class="modal-content">
+      <span class="close" (click)="formModalDelete()">&times;</span>
+      <h2>Delete User</h2>
+      <p>Are you sure you want to delete {{ user }}?</p>
+      <button (click)="confirmDelete()" class="btn btn-danger">Delete</button>
+      <button (click)="closeModalDelete()" class="btn btn-secondary">Cancel</button>
+    </div>
+  </div>
+</div>
+</div>
+
+
 
 
   
