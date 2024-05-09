@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const admin = require("firebase-admin");
 const credentials = require("./firebase/firebase.json");
-const { encryptedData,decryptedData } = require("./crypto");
+const { encryptedData, decryptedData } = require("./crypto");
 
 admin.initializeApp({
     credential: admin.credential.cert(credentials)
@@ -36,7 +36,7 @@ const controller = {
     },
     getUser: async (req, res) => {
         try {
-            const userId = req.params.id;
+            const userId = req.params.userId;
             const userDoc = await db.collection("users").doc(userId).get();
             if (!userDoc.exists) {
                 res.status(404).send('User not found');
@@ -76,26 +76,26 @@ const controller = {
             res.status(500).json(e);
         }
     },
-    validateUser: async(req, res) => {
-        let {email,password} = req.body;
+    validateUser: async (req, res) => {
+        let { email, password } = req.body;
         // Validate the user's input
-        try{
+        try {
             const userDoc = await db.collection('users').where('email', '==', email).get();
-            if(userDoc.size == 0) {
+            if (userDoc.size == 0) {
                 return res.status(404).send({
                     message: {},
                     valid: false
                 });
-            }else{
+            } else {
                 const user = userDoc.docs[0].data();
                 // compare passwords
-                if (password == decryptedData(user.password)){
+                if (password == decryptedData(user.password)) {
                     return res.status(200).send({
                         message: user,
                         valid: true
                     })
                 }
-                else{
+                else {
                     return res.status(401).send({
                         message: {},
                         valid: false
@@ -103,12 +103,12 @@ const controller = {
                 }
             }
         }
-        catch(error){
+        catch (error) {
             console.error(error);
             res.status(500).json(error);
         }
     },
-    AddBookByUser :async(req,res)=>{
+    AddBookByUser: async (req, res) => {
         try {
             const book = req.body;
             const response = await db.collection("BookList").add(book);
@@ -119,9 +119,12 @@ const controller = {
             res.status(500).json(e);
         }
     },
-    assignBookToUser: async (req,res)=>{
+    assignBookToUser: async (req, res) => {
         try {
-            const userDoc = await db.collection("exchange").add(req.body);
+            const userDoc = await db.collection("exchange").add({
+                "user": db.collection("users").doc(req.body.userId),
+                "book": db.collection("books").doc(req.body.bookId)
+            });
             res.status(200).send(`book with ID: ${req.body.bookId} assigned to user`);
 
         } catch (e) {
@@ -129,16 +132,29 @@ const controller = {
             res.status(500).json(e);
         }
     },
-    searchBook: async (req, res)=>{
+    searchBook: async (req, res) => {
         let query = req.body.query;
-        if(!query) return res.status(400).send('Query parameter is missing!');
-        const {key,value} = query;
-        const snapshot = await db.collection('BookList').where(key,'==',value).get();
+        if (!query) return res.status(400).send('Query parameter is missing!');
+        const { key, value } = query;
+        const snapshot = await db.collection('BookList').where(key, '==', value).get();
         if (!snapshot.empty) {
-            let docs = snapshot.docs.map((doc)=> doc.data());
+            let docs = snapshot.docs.map((doc) => doc.data());
             res.status(200).json(docs);
-        } else{
-              res.status(404).json([]);
+        } else {
+            res.status(404).json([]);
+        }
+    },
+    getAssignedBook: async (req, res) => {
+        try {
+            const userID = req.body.userId;
+            const snapshot = await db.collection('exchange')
+                .where('user', '==', db.collection('users').doc(userID))
+                .get();
+            var book = await snapshot.docs[0].data().book.get();
+            res.status(200).json(book.data());
+        }
+        catch (e) {
+            res.status(500).json(e);
         }
     }
 };
@@ -146,14 +162,15 @@ const controller = {
 
 app.get("/", controller.hello);
 app.post("/user", controller.addUser);
-app.get("/user/:id", controller.getUser);
+app.get("/user/:userId", controller.getUser);
 app.get("/user/", controller.getAllUsers);
 app.get("/login", controller.validateUser);
 app.get("/addbookbyuser", controller.AddBookByUser);
-app.get("/getAllBookList",controller.getAllBookList);
-app.get("/getAllBookList",controller.getAllBookList);
-app.post('/associate',controller.assignBookToUser);
-app.get('/search',controller.searchBook);
+app.get("/getAllBookList", controller.getAllBookList);
+app.get("/getAllBookList", controller.getAllBookList);
+app.post('/associate', controller.assignBookToUser);
+app.get('/search', controller.searchBook);
+app.get('/users/:userId/getAssignedBook', controller.getAssignedBook);
 
 const PORT = process.env.PORT || 8080;
 
