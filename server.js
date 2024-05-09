@@ -121,14 +121,8 @@ const controller = {
     },
     assignBookToUser: async (req,res)=>{
         try {
-            const {userId,bookId} = req.body;
-            console.log(userId);
-            console.log(bookId);
-            const userDoc = db.collection("users").doc(userId);
-            userDoc.update({
-                'book': bookId
-            });
-            res.status(200).send(`book with ID: ${bookId} assigned to user`);
+            const userDoc = await db.collection("exchange").add(req.body);
+            res.status(200).send(`book with ID: ${req.body.bookId} assigned to user`);
 
         } catch (e) {
             console.error(e);
