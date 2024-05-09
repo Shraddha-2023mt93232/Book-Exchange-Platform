@@ -123,7 +123,7 @@ const controller = {
         try {
             const userDoc = await db.collection("exchange").add({
                 "user": db.collection("users").doc(req.body.userId),
-                "book": db.collection("books").doc(req.body.bookId)
+                "book": db.collection("BookList").doc(req.body.bookId)
             });
             res.status(200).send(`book with ID: ${req.body.bookId} assigned to user`);
 
@@ -146,7 +146,7 @@ const controller = {
     },
     getAssignedBook: async (req, res) => {
         try {
-            const userID = req.body.userId;
+            const userID = req.params.userId;
             const snapshot = await db.collection('exchange')
                 .where('user', '==', db.collection('users').doc(userID))
                 .get();
