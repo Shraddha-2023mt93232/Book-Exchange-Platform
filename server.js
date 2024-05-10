@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-const {controller} = require("./controller/usercontroller");
+const {controller} = require("./controller/controller");
 
 app.use(express.json()); // Parse JSON bodies (this will let us get
 app.use(express.urlencoded()); // Parse URL-encoded bodies (helps with handling form data)
@@ -16,6 +16,10 @@ app.get("/getAllBookList", controller.getAllBookList);
 app.post('/associate', controller.assignBookToUser);
 app.get('/search', controller.searchBook);
 app.get('/users/:userId/getAssignedBook', controller.getAssignedBook);
+app.post('/message', controller.message);
+app.post('/chatbox',controller.chatbox);
+app.post('/submitBook/:userId',controller.submitBook);
+app.post('/deleteAccount/:userId',controller.deleteAccount);
 
 const PORT = process.env.PORT || 8080;
 
