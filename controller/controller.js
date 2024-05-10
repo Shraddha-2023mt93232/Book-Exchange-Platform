@@ -3,17 +3,24 @@ const { encryptedData, decryptedData } = require("../crypto");
 const { Filter } = require("firebase-admin/firestore");
 const { messaging } = require("firebase-admin");
 
+const getCollection = {
+    'user': 'users',
+    'book': 'BookList'
+}
+
 const controller = {
-    'addUser': async (req, res) => {
-        const user = req.body;
+    'addEntity': async (req, res) => {
+        const entityName = req.params.entity;
+        var entity = req.body;
         //encrypt password
-        user.password = encryptedData(user.password);
+        if (entityName === 'user') entity.password = encryptedData(entity.password);
         try {
-            const response = await db.collection("users").add(user);
-            res.status(201).send(`user added with ID: ${response.id}`);
-        } catch (e) {
-            console.error(e);
-            res.status(500).json(e);
+            const response = await db.collection(getCollection[entityName]).add(entity);
+            const id = response.id;
+            var doc = await response.get();
+            res.status(201).json({ ...doc.data(), id });
+        } catch (error) {
+            res.status(500).json({ error });
         }
     },
     'getUser': async (req, res) => {
@@ -23,39 +30,24 @@ const controller = {
             if (!userDoc.exists) {
                 res.status(404).send('User not found');
             } else {
-                res.status(200).json(userDoc.data());
+                res.status(200).json({ ...userDoc.data(), id: userId });
             }
         } catch (e) {
             console.error(e);
             res.status(500).json(e);
         }
     },
-    'getAllUsers': async (req, res) => {
+    'getAllEntity': async (req, res) => {
         try {
-            const userId = req.params.id;
-            const userDoc = await db.collection("users").get();
+            const entity = req.params.entity;
+            const userDoc = await db.collection(getCollection[entity]).get();
             var arr = [];
             userDoc.forEach(doc => {
-                arr.push(doc.data());
+                arr.push({ ...doc.data(), id: doc.id });
             });
             res.status(200).json(arr);
-        } catch (e) {
-            console.error(e);
-            res.status(500).json(e);
-        }
-    },
-    'getAllBookList': async (req, res) => {
-        try {
-            const userId = req.params.id;
-            const userDoc = await db.collection("BookList").get();
-            var arr = [];
-            userDoc.forEach(doc => {
-                arr.push(doc.data());
-            });
-            res.status(200).json(arr);
-        } catch (e) {
-            console.error(e);
-            res.status(500).json(e);
+        } catch (error) {
+            res.status(500).json({ error });
         }
     },
     'validateUser': async (req, res) => {
@@ -90,17 +82,6 @@ const controller = {
             res.status(500).json(error);
         }
     },
-    'AddBookByUser': async (req, res) => {
-        try {
-            const book = req.body;
-            const response = await db.collection("BookList").add(book);
-            res.status(201).send(`book added with ID: ${response.id}`);
-
-        } catch (e) {
-            console.error(e);
-            res.status(500).json(e);
-        }
-    },
     'assignBookToUser': async (req, res) => {
         try {
             const userDoc = await db.collection("exchange").add({
@@ -114,49 +95,51 @@ const controller = {
             res.status(500).json(e);
         }
     },
-    'deleteAccount': async (req,res) => {
+    'deleteAccount': async (req, res) => {
         const userId = req.params.userId;
-            // Delete the exchange document where user matches the provided userId
-            await db.collection('users').doc(userId).delete().then(()=>{
-                res.status(200).json({
-                    message: "User Deleted successfully"
-                  });
-            }).catch((error)=>{
-                res.status(500).json({
-                    message: "Error deleting the user",
-                    error: error
-                  });
-            })
+        // Delete the exchange document where user matches the provided userId
+        await db.collection('users').doc(userId).delete().then(() => {
+            res.status(200).json({
+                message: "User Deleted successfully"
+            });
+        }).catch((error) => {
+            res.status(500).json({
+                message: "Error deleting the user",
+                error: error
+            });
+        })
     },
     'submitBook': async (req, res) => {
         const userId = req.params.userId;
-      
+
         try {
-          // Get the user document reference
-          const userRef = db.collection('users').doc(userId);
-      
-          // Delete the exchange document where user matches the provided userId
-          await db.collection('exchange').where('user', '==', userRef).get().then(querySnapshot => {
-            querySnapshot.forEach(doc => doc.ref.delete());
-          });
-      
-          res.status(200).json({
-            message: "Book submitted successfully"
-          });
+            // Get the user document reference
+            const userRef = db.collection('users').doc(userId);
+
+            // Delete the exchange document where user matches the provided userId
+            await db.collection('exchange').where('user', '==', userRef).get().then(querySnapshot => {
+                querySnapshot.forEach(doc => doc.ref.delete());
+            });
+
+            res.status(200).json({
+                message: "Book submitted successfully"
+            });
         } catch (error) {
-          console.error(error);
-          res.status(500).json({
-            message: "Error submitting book"
-          });
+            console.error(error);
+            res.status(500).json({
+                message: "Error submitting book"
+            });
         }
-      },
-    'searchBook': async (req, res) => {
-        let query = req.body.query;
+    },
+    'search': async (req, res) => {
+        let {query,entity} = req.body;
         if (!query) return res.status(400).send('Query parameter is missing!');
         const { key, value } = query;
-        const snapshot = await db.collection('BookList').where(key, '==', value).get();
+        const snapshot = await db.collection(getCollection[entity]).where(key, '==', value).get();
         if (!snapshot.empty) {
-            let docs = snapshot.docs.map((doc) => doc.data());
+            let docs = snapshot.docs.map((doc) => {
+                return {...doc.data(), id: doc.id}
+            });
             res.status(200).json(docs);
         } else {
             res.status(404).json([]);
@@ -169,10 +152,10 @@ const controller = {
                 .where('user', '==', db.collection('users').doc(userID))
                 .get();
             var book = await snapshot.docs[0].data().book.get();
-            res.status(200).json(book.data());
+            res.status(200).json({ ...book.data(), id: book.id });
         }
-        catch (e) {
-            res.status(500).json(e);
+        catch (error) {
+            res.status(500).json(error);
         }
     },
     'message': async (req, res) => {

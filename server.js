@@ -6,15 +6,12 @@ const {controller} = require("./controller/controller");
 app.use(express.json()); // Parse JSON bodies (this will let us get
 app.use(express.urlencoded()); // Parse URL-encoded bodies (helps with handling form data)
 
-app.post("/user", controller.addUser);
+app.post("/add/:entity", controller.addEntity);
 app.get("/user/:userId", controller.getUser);
-app.get("/user/", controller.getAllUsers);
+app.get("/list/:entity", controller.getAllEntity);
 app.get("/login", controller.validateUser);
-app.get("/addbookbyuser", controller.AddBookByUser);
-app.get("/getAllBookList", controller.getAllBookList);
-app.get("/getAllBookList", controller.getAllBookList);
-app.post('/associate', controller.assignBookToUser);
-app.get('/search', controller.searchBook);
+app.post('/assign', controller.assignBookToUser);
+app.post('/search', controller.search);
 app.get('/users/:userId/getAssignedBook', controller.getAssignedBook);
 app.post('/message', controller.message);
 app.post('/chatbox',controller.chatbox);
