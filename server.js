@@ -5,11 +5,17 @@ const {controller} = require("./controller/controller");
 
 app.use(express.json()); // Parse JSON bodies (this will let us get
 app.use(express.urlencoded()); // Parse URL-encoded bodies (helps with handling form data)
+let allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', "*");
+    res.header('Access-Control-Allow-Headers', "*");
+    next();
+  }
+  app.use(allowCrossDomain);
 
 app.post("/add/:entity", controller.addEntity);
 app.get("/user/:userId", controller.getUser);
 app.get("/list/:entity", controller.getAllEntity);
-app.get("/login", controller.validateUser);
+app.post("/login", controller.validateUser);
 app.post('/assign', controller.assignBookToUser);
 app.post('/search', controller.search);
 app.get('/users/:userId/getAssignedBook', controller.getAssignedBook);
