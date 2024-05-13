@@ -10,17 +10,17 @@
           <a class="nav-link" href="#">{{user?.firstName}}</a>
         </li> -->
         <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
+          <a class="nav-link" href="#">My Books</a>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link disabled" href="#">Disabled</a>
-        </li>
+        </li> -->
       </ul>
       <ul class="navbar-nav navbar-right">
         <!-- User menu -->
         <li class="nav-item dropdown menu-user">
           <div class="dropdown">
-            <button class="dropbtn">{{user.firstName}}{{user.lastName}} 
+            <button class="dropbtn">Mehak
               <i class="fa fa-caret-down"></i>
             </button>
             <div class="dropdown-content">
@@ -51,20 +51,20 @@
     </thead>
     <tbody>
         <tr *ngFor="let dt of data">
-            <td>{{dt.bookName}}</td>
-            <td>{{dt.author}}</td>
-            <td>{{dt.releasedOn | date}}</td>
+            <td>{{dt.BookName}}</td>
+            <td>{{dt.AuthorName}}</td>
+            <td>{{dt.DateOfPublication | date}}</td>
             <!-- <div "> -->
-            <td *ngIf="dt.available===true"><a href="#" data-bs-target="#bookDetailsModal" (click)="openModal(dt.bookName)">Borrow</a></td>
+            <td *ngIf="dt.AvailabilityStatus==true"><a href="#" data-bs-target="#bookDetailsModal" (click)="openModal(dt.BookName)">Borrow</a></td>
             <!-- </div> -->
-            <!-- <div *ngIf="dt.available===false"> -->
-              <td *ngIf="dt.available===false"><b>Currently Unavailable</b></td>
+            <!-- <div *ngIf="dt.AvailabilityStatus===false"> -->
+              <td *ngIf="dt.AvailabilityStatus==false"><b>Currently UnAvailabile</b></td>
               <!-- </div> -->
             <td class = "select">
               <select>        
                       
                       <option value="saab">View</option>
-                      <!-- <option value="mercedes" data-bs-target="#bookDetailsModal" (click)="openModal(dt.bookName)">Edit</option> -->
+                      <!-- <option value="mercedes" data-bs-target="#bookDetailsModal" (click)="openModal(dt.BookName)">Edit</option> -->
                       <option value="audi">Delete</option>
               </select>
               

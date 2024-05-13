@@ -4,6 +4,7 @@ import { Table } from 'primeng/table';
 import { ViewChild } from '@angular/core';
 import { bookBorrow } from '../../models/bookBorrow';
 import { EventEmitter, Output } from '@angular/core';
+import { bookExchangePlatformService } from '../../services/book-exchange-service';
 
 
 @Component({
@@ -27,34 +28,27 @@ export class LayoutComponent {
     "Actions"
   ]
   user: any;
-  data = [
-    {
-      bookName: "Book1",
-      author: "Author1",
-      releasedOn: "2023-12-04",
-      available: true
-    },
-    {
-      bookName: "Book2",
-      author: "Author2",
-      releasedOn: "2023-12-04",
-      available: false
-    },
-    {
-      bookName: "Book3",
-      author: "Author3",
-      releasedOn: "2023-12-04",
-      available: true
-    }
-  ]
+  data: any
+
+  
+  
   showDelete = false
   borrowerDetails: any;
-  constructor(private router: Router) {
+  constructor(private router: Router, private bookBorrowService: bookExchangePlatformService) {
     const localUser = localStorage.getItem('loggedUser');
     if(localUser != null) {
       this.user = JSON.parse(localUser);
     }
   }
+
+  ngOnInit (): void{
+    // load table data
+    this.bookBorrowService.getAllBooks().subscribe(res=>{
+      this.data = res}
+    )
+    
+  }
+
  
   borrower: any = {};
 
@@ -86,11 +80,14 @@ export class LayoutComponent {
   closeModalDelete(){
     this.showModalPopup = true;
   }
-  confirmDelete(){
+  confirmDelete(user: any){
     // delete user api
-    console.log(this.user)
+    this.bookBorrowService.deleteAccount(user)
   }
   ngOninit (){
+    this.user = {
+      "name": "Mehak"
+    }
     this.borrowBookData = new bookBorrow()
   }
   onLogoff() {

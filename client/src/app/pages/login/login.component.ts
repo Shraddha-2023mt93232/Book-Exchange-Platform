@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { bookExchangePlatformService } from '../../services/book-exchange-service';
+import { v4 as uuidv4 } from 'uuid';
+
 
 @Component({
   selector: 'app-login',
@@ -8,48 +12,80 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
 
-
+  // bookechangePlatformService = bookExchangePlatformService
   isSignDivVisiable: boolean  = true;
 
   signUpObj: SignUpModel  = new SignUpModel();
   loginObj: LoginModel  = new LoginModel();
+  users: any
 
-  constructor(private router: Router){}
-
+  constructor(private router: Router, private bookExchangePlatformService: bookExchangePlatformService){}
+  ngOnInit(): void {
+    this.bookExchangePlatformService.getUsers().subscribe(res =>{
+      this.users = res
+    }
+    )
+  }
 
   onRegister() {
-    const localUser = localStorage.getItem('angular17users');
-    if(localUser != null) {
-      console.log(this.isSignDivVisiable)
-      const users =  JSON.parse(localUser);
-      users.push(this.signUpObj);
-      localStorage.setItem('angular17users', JSON.stringify(users))
-    } else {
-      const users = [];
-      users.push(this.signUpObj);
-      localStorage.setItem('angular17users', JSON.stringify(users))
+    const userExists = this.users.some((user: { email: string }) => user.email === this.signUpObj.email);
+    
+    
+
+      if (userExists === false)
+        {
+         
+           console.log(this.isSignDivVisiable)
+           const userData = {
+            id: uuidv4(),
+            email: this.signUpObj.email,
+            dateOfBirth: this.signUpObj.dob,
+            name: this.signUpObj.firstName,
+            gender: "",
+            phone: this.signUpObj.phn,
+            password: this.signUpObj.password
+           }
+           this.bookExchangePlatformService.createUser(userData).subscribe()
+           alert('Registration Success')
+           
+         } 
+         else {
+          alert('User already exists')
+         
+         
+      
     }
-    alert('Registration Success')
+    
   }
 
   onLogin() {
-    const localUsers =  localStorage.getItem('angular17users');
-    
+    console.log(this.loginObj)
+    const userExists = this.users.some((user: { email: string }) => user.email === this.loginObj.email);
+    if(userExists===true){
 
-    if(localUsers != null) {
-      const users =  JSON.parse(localUsers);
-
-      const isUserPresent =  users.find( (user:SignUpModel)=> user.email == this.loginObj.email && user.password == this.loginObj.password);
-      if(isUserPresent != undefined) {
-        alert("User Found...");
-        localStorage.setItem('loggedUser', JSON.stringify(isUserPresent));
+      const res = this.bookExchangePlatformService.login(this.loginObj).subscribe()
+      alert("User Found...");
+      localStorage.setItem('loggedUser', JSON.stringify(userExists));
         this.router.navigateByUrl('/dashboard');
         this.isSignDivVisiable = false
         console.log(this.isSignDivVisiable)
-      } else {
-        alert("No User Found")
-      }
+      
+      
     }
+    else {
+      alert("No User Found")
+    }
+    
+
+    // if(localUsers != null) {
+    //   const users =  JSON.parse(localUsers);
+
+    //   const isUserPresent =  users.find( (user:SignUpModel)=> user.email == this.loginObj.email && user.password == this.loginObj.password);
+    //   if(isUserPresent != undefined) {
+        
+        
+    //   } 
+    // }
   }
 
 }
